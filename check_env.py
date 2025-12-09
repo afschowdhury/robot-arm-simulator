@@ -11,12 +11,10 @@ print(f"Numpy: {np.__version__}")
 print(f"Gymnasium: {gymnasium.__version__}")
 print(f"Shimmy: {shimmy.__version__}")
 
-# Check if model exists
 model_path = "models/final_model.zip"
 if os.path.exists(model_path):
     print(f"Model found at {model_path}")
     
-    # Try loading metadata directly if possible to inspect
     try:
         import zipfile
         with zipfile.ZipFile(model_path, 'r') as archive:
@@ -25,4 +23,3 @@ if os.path.exists(model_path):
         print("Error reading zip:", e)
 else:
     print("Model not found!")
-

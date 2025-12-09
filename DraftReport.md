@@ -35,16 +35,56 @@ This approach is chosen for several reasons:
 
 ## 2. Results
 
--   **Success Rate**: (Pending evaluation of shaped-reward model)
--   **Training Time**: 2000 episodes
+### Training Configuration
 -   **Algorithm**: PPO (Proximal Policy Optimization)
+-   **Training Episodes**: 2000 episodes
+-   **Training Time**: [TO BE FILLED: total training time in hours/minutes]
+
+### Evaluation Protocol
+To validate the trained model, we conducted systematic testing following the project requirements:
+1. Created 10 independent simulation environments, each with randomly generated object locations and noise perturbations
+2. For each environment, ran the trained RL controller once to attempt the pick-and-place task
+3. Recorded success (object successfully lifted and held) or failure for each episode
+4. Calculated the overall success rate as the percentage of successful episodes out of 10
+5. Identified the best-performing episode for video demonstration
+
+### Success Rate
+**Overall Success Rate**: [TO BE FILLED: X/10 (XX%)]
+
+### Detailed Test Results
+
+| Episode | Success | Notes |
+|---------|---------|-------|
+| Episode 0 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+| Episode 1 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+| Episode 2 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+| Episode 3 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+| Episode 4 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+| Episode 5 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+| Episode 6 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+| Episode 7 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+| Episode 8 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+| Episode 9 | [TO BE FILLED: Success/Failure] | [TO BE FILLED: brief note if needed] |
+
+### Demo Video
+The submitted demonstration video corresponds to: **[TO BE FILLED: Episode X]** (the best-performing episode)
 
 ## 3. Analysis
 
-### True vs. Noisy Object Location
-In the example video, we can observe the difference between the "believed" location and reality.
--   **Noisy Location**: Often offset by up to 10cm. Without correction, the gripper would grasp empty air or knock the object over.
--   **Correction**: The agent uses the visual input to shift the target coordinate towards the true center of the object.
+### True vs. Noisy Object Location in Demo Video
+
+The submission guidelines require specific coordinate information for the demo video environment. Below are the actual numerical values from the episode shown in the demonstration video:
+
+**Object Location Data:**
+-   **True Object Position**: [TO BE FILLED: (x, y, z) in meters, e.g., (0.123, -0.045, 0.825)]
+-   **Noisy Object Position**: [TO BE FILLED: (x, y, z) in meters, e.g., (0.089, -0.032, 0.841)]
+-   **Position Error (Noise)**: [TO BE FILLED: (Δx, Δy, Δz) in meters, e.g., (-0.034, 0.013, 0.016)]
+-   **RL Agent Correction**: [TO BE FILLED: (Δx, Δy, Δz) in meters, e.g., (0.031, -0.011, -0.014)]
+-   **Final Target Position**: [TO BE FILLED: (x, y, z) in meters = Noisy + Correction]
+-   **Residual Error**: [TO BE FILLED: distance in meters between Final Target and True Position]
+
+**Interpretation:**
+In the example video, we can observe the difference between the "believed" location and reality. The noisy sensor reading was offset from the true position by approximately [TO BE FILLED: X cm]. Without the RL agent's correction, the gripper would have grasped empty air or knocked the object over. The CNN-based policy successfully used the visual input to shift the target coordinate towards the true center of the object, reducing the error to approximately [TO BE FILLED: Y cm].
 
 ### Reasoning and Lessons Learned
 -   **Importance of Reward Shaping**: The initial failure (0%) with sparse rewards highlighted the difficulty of the task. The random noise creates a large search space for the correction vector. By providing a distance-based penalty, the agent can perform gradient ascent on the correction accuracy directly, rather than relying on chance successes.

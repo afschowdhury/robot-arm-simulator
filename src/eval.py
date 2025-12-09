@@ -11,11 +11,7 @@ from env import LiftCorrectionEnv
 
 
 def make_video(frames_dir, output_path):
-    """
-    Create a video from images in frames_dir.
-    """
     images = []
-    # Sort files by frame id
     files = sorted([f for f in os.listdir(frames_dir) if f.endswith(".png")])
     if not files:
         print(f"No frames found in {frames_dir}")
@@ -32,8 +28,6 @@ def make_video(frames_dir, output_path):
 
 def evaluate():
     models_dir = "models"
-    # Try the checkpoint model if final_model seems bad/missing
-    # Prefer rl_model_2000_steps.zip if it exists
     candidates = ["rl_model_2000_steps", "final_model"]
 
     model_path = None
@@ -49,13 +43,11 @@ def evaluate():
 
     print(f"Loading model from: {model_path}")
 
-    # Load model
     env = LiftCorrectionEnv()
     try:
         model = PPO.load(model_path, env=env)
     except Exception as e:
         print(f"Failed to load model: {e}")
-        # Try loading without env to see if it works
         model = PPO.load(model_path)
 
     num_episodes = 10
@@ -75,14 +67,12 @@ def evaluate():
         terminated = False
         truncated = False
 
-        # Predict action
         action, _states = model.predict(obs, deterministic=True)
 
         print(f"\n--- Episode {i+1} ---")
         print(f"Noisy Pos: {obs['noisy_pos']}")
         print(f"Action (Correction): {action}")
 
-        # Step
         obs, reward, terminated, truncated, info = env.step(action)
 
         is_success = info.get("is_success", False)
@@ -93,7 +83,6 @@ def evaluate():
             if best_episode_idx == -1:
                 best_episode_idx = i
 
-        # Move frames to eval dir
         src_frames = "tmp_frames"
         dst_frames = os.path.join(eval_dir, f"episode_{i}")
         if os.path.exists(src_frames):
@@ -102,14 +91,12 @@ def evaluate():
     success_rate = success_count / num_episodes
     print(f"\nSuccess Rate: {success_rate * 100}% ({success_count}/{num_episodes})")
 
-    # Generate video for the best (first successful) episode
     if best_episode_idx != -1:
         print(f"Generating video for Episode {best_episode_idx+1}...")
         frames_dir = os.path.join(eval_dir, f"episode_{best_episode_idx}")
         make_video(frames_dir, "best_controller_demo.mp4")
     else:
         print("No successful episodes to generate video.")
-        # Generate video for the last episode anyway to debug
         frames_dir = os.path.join(eval_dir, f"episode_{num_episodes-1}")
         make_video(frames_dir, "failed_controller_demo.mp4")
 
